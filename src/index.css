@@ -1,0 +1,114 @@
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; width: 100%; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: #fff;
+  color: #0f172a;
+  overflow-x: hidden;
+}
+
+.kid-bg {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.9), transparent 35%),
+    radial-gradient(circle at 80% 15%, rgba(255,255,255,0.8), transparent 35%),
+    radial-gradient(circle at 30% 80%, rgba(255,255,255,0.7), transparent 35%),
+    linear-gradient(180deg, #bfe7ff, #ffd6ee, #fff2b8);
+}
+
+.kid-card {
+  width: min(1200px, 96vw);
+  background: rgba(255,255,255,0.92);
+  border-radius: 28px;
+  padding: 22px;
+  box-shadow: 0 14px 45px rgba(0,0,0,0.12);
+  border: 1px solid rgba(15,23,42,0.08);
+  text-align: center;
+}
+
+.kid-title {
+  margin: 10px 0 0 0;
+  font-size: clamp(28px, 3vw, 44px);
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+.kid-sub {
+  margin-top: 8px;
+  color: #334155;
+  font-weight: 650;
+}
+
+.kid-pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: white;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.spinner {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 6px solid rgba(15,23,42,0.12);
+  border-top-color: rgba(15,23,42,0.85);
+  animation: spin 0.9s linear infinite;
+  margin: 0 auto 14px auto;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+.cursor-sparkle {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  background: radial-gradient(circle, #fff, #ffd6ff, transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: sparkle-fade 0.6s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes sparkle-fade {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -70%) scale(0.2); }
+}
+
+
+.falling-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.falling-item {
+  position: absolute;
+  top: -40px;
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle at 30% 30%, #fff, #ffb7d5, #ff7aa2);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(45deg);
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
