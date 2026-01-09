@@ -4,6 +4,7 @@ import TalkPage from "./screens/TalkPage";
 import CursorSparkles from "./components/CursorSparkles";
 import FallingDecor from "./components/FallingDecor";
 
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 export default function App() {
   const [page, setPage] = useState("draw");
@@ -17,9 +18,9 @@ export default function App() {
     audio.loop = true;
     audio.volume = 0;
     bgmRef.current = audio;
-  
+
     audio.play().catch(() => {});
-  
+
     const unlock = async () => {
       try {
         if (audio.paused) {
@@ -30,10 +31,10 @@ export default function App() {
       window.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keydown", unlock);
     };
-  
+
     window.addEventListener("pointerdown", unlock);
     window.addEventListener("keydown", unlock);
-  
+
     return () => {
       window.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keydown", unlock);
@@ -42,7 +43,6 @@ export default function App() {
       } catch {}
     };
   }, []);
-  
 
   function playPop() {
     const p = popRef.current;
@@ -59,7 +59,7 @@ export default function App() {
     setPage("talk");
 
     try {
-      const res = await fetch("http://localhost:8000/transform-drawing", {
+      const res = await fetch(`${API}/transform-drawing`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image_base64: drawingBase64 }),
@@ -73,10 +73,16 @@ export default function App() {
 
   return (
     <>
-    <FallingDecor />
+      <FallingDecor />
       <CursorSparkles />
       {page === "draw" && <DrawPage onSpeak={handleGoTalk} onPop={playPop} />}
-      {page === "talk" && <TalkPage avatarImage={avatarImage} onBack={() => setPage("draw")} onPop={playPop} />}
+      {page === "talk" && (
+        <TalkPage
+          avatarImage={avatarImage}
+          onBack={() => setPage("draw")}
+          onPop={playPop}
+        />
+      )}
     </>
   );
 }
