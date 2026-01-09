@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
 let globalLoopRunning = false;
 
 export default function TalkPage({ avatarImage, onBack }) {
@@ -21,7 +23,9 @@ export default function TalkPage({ avatarImage, onBack }) {
     try {
       v.loop = true;
       v.muted = true;
-      try { v.currentTime = 0; } catch {}
+      try {
+        v.currentTime = 0;
+      } catch {}
       await v.play();
     } catch (e) {
       console.warn("Video play blocked:", e);
@@ -54,7 +58,7 @@ export default function TalkPage({ avatarImage, onBack }) {
         "Stable camera, soft lighting. No subtitles, no text, no borders.";
 
       try {
-        const res = await fetch("http://localhost:8000/talking-video", {
+        const res = await fetch(`${API}/talking-video`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -87,7 +91,9 @@ export default function TalkPage({ avatarImage, onBack }) {
 
     generateSessionVideo();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [avatarImage]);
 
   useEffect(() => {
@@ -141,7 +147,7 @@ export default function TalkPage({ avatarImage, onBack }) {
 
     setStatus("speaking");
 
-    const audioRes = await fetch("http://localhost:8000/speak", {
+    const audioRes = await fetch(`${API}/speak`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
@@ -196,7 +202,11 @@ export default function TalkPage({ avatarImage, onBack }) {
     let stream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
       });
     } catch {
       return "";
@@ -218,7 +228,9 @@ export default function TalkPage({ avatarImage, onBack }) {
     await new Promise((r) => setTimeout(r, 2500));
 
     if (ctrl?.cancelled) {
-      try { recorder.stop(); } catch {}
+      try {
+        recorder.stop();
+      } catch {}
       stream.getTracks().forEach((t) => t.stop());
       return "";
     }
@@ -237,7 +249,7 @@ export default function TalkPage({ avatarImage, onBack }) {
     const form = new FormData();
     form.append("audio", blob, "speech.webm");
 
-    const res = await fetch("http://localhost:8000/listen", { method: "POST", body: form });
+    const res = await fetch(`${API}/listen`, { method: "POST", body: form });
     if (!res.ok) return "";
 
     const data = await res.json();
@@ -250,7 +262,7 @@ export default function TalkPage({ avatarImage, onBack }) {
     setStatus("thinking");
     stopVideo();
 
-    const res = await fetch("http://localhost:8000/chat", {
+    const res = await fetch(`${API}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, session_id: sessionIdRef.current }),
@@ -319,10 +331,20 @@ export default function TalkPage({ avatarImage, onBack }) {
 
         <p style={{ marginTop: 12, fontWeight: 900 }}>Status: {status}</p>
 
-        {lastUser && <p><b>You:</b> {lastUser}</p>}
-        {lastAI && <p><b>AI:</b> {lastAI}</p>}
+        {lastUser && (
+          <p>
+            <b>You:</b> {lastUser}
+          </p>
+        )}
+        {lastAI && (
+          <p>
+            <b>AI:</b> {lastAI}
+          </p>
+        )}
 
-        <button onClick={handleBack} style={backBtn}>Back</button>
+        <button onClick={handleBack} style={backBtn}>
+          Back
+        </button>
       </div>
     </div>
   );
@@ -382,9 +404,18 @@ function MiniBreakout() {
       ballX += vx;
       ballY += vy;
 
-      if (ballX - r < 0) { ballX = r; vx *= -1; }
-      if (ballX + r > W) { ballX = W - r; vx *= -1; }
-      if (ballY - r < 0) { ballY = r; vy *= -1; }
+      if (ballX - r < 0) {
+        ballX = r;
+        vx *= -1;
+      }
+      if (ballX + r > W) {
+        ballX = W - r;
+        vx *= -1;
+      }
+      if (ballY - r < 0) {
+        ballY = r;
+        vy *= -1;
+      }
 
       const pTop = H - 26;
       const pLeft = paddleX - paddleW / 2;
